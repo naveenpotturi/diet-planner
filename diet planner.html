@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Planner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #meal-list {
+            max-width: 400px;
+            margin: auto;
+            text-align: left;
+        }
+        .meal {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Diet Planner</h1>
+    <label for="calorie-goal">Daily Calorie Goal:</label>
+    <input type="number" id="calorie-goal" placeholder="Enter calories">
+    <button onclick="setGoal()">Set Goal</button>
+    <p id="goal-display"></p>
+    
+    <h2>Add Meal</h2>
+    <input type="text" id="meal-name" placeholder="Meal Name">
+    <input type="number" id="meal-calories" placeholder="Calories">
+    <button onclick="addMeal()">Add Meal</button>
+    
+    <h2>Meal List</h2>
+    <div id="meal-list"></div>
+    <h3>Total Calories: <span id="total-calories">0</span></h3>
+    
+    <script>
+        let calorieGoal = 0;
+        let totalCalories = 0;
+        
+        function setGoal() {
+            calorieGoal = document.getElementById('calorie-goal').value;
+            document.getElementById('goal-display').innerText = `Goal: ${calorieGoal} kcal`;
+        }
+        
+        function addMeal() {
+            let mealName = document.getElementById('meal-name').value;
+            let mealCalories = parseInt(document.getElementById('meal-calories').value);
+            if (mealName && mealCalories) {
+                let mealList = document.getElementById('meal-list');
+                let mealDiv = document.createElement('div');
+                mealDiv.classList.add('meal');
+                mealDiv.innerHTML = `${mealName} - ${mealCalories} kcal <button onclick="removeMeal(this, ${mealCalories})">X</button>`;
+                mealList.appendChild(mealDiv);
+                
+                totalCalories += mealCalories;
+                document.getElementById('total-calories').innerText = totalCalories;
+            }
+        }
+        
+        function removeMeal(button, calories) {
+            button.parentElement.remove();
+            totalCalories -= calories;
+            document.getElementById('total-calories').innerText = totalCalories;
+        }
+    </script>
+</body>
+</html>
