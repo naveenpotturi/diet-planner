@@ -21,10 +21,15 @@
             padding: 10px;
             border-bottom: 1px solid #ddd;
         }
+        .error {
+            color: red;
+        }
     </style>
 </head>
 <body>
     <h1>Diet Planner</h1>
+    <p>Set your daily calorie goal and start adding meals to track your intake!</p>
+    
     <label for="calorie-goal">Daily Calorie Goal:</label>
     <input type="number" id="calorie-goal" placeholder="Enter calories">
     <button onclick="setGoal()">Set Goal</button>
@@ -34,24 +39,39 @@
     <input type="text" id="meal-name" placeholder="Meal Name">
     <input type="number" id="meal-calories" placeholder="Calories">
     <button onclick="addMeal()">Add Meal</button>
+    <p id="error-message" class="error"></p>
     
     <h2>Meal List</h2>
     <div id="meal-list"></div>
+    
     <h3>Total Calories: <span id="total-calories">0</span></h3>
+    
+    <h4 id="status-message"></h4>
     
     <script>
         let calorieGoal = 0;
         let totalCalories = 0;
         
         function setGoal() {
-            calorieGoal = document.getElementById('calorie-goal').value;
-            document.getElementById('goal-display').innerText = `Goal: ${calorieGoal} kcal`;
+            calorieGoal = parseInt(document.getElementById('calorie-goal').value);
+            if (!calorieGoal || calorieGoal <= 0) {
+                document.getElementById('goal-display').innerText = 'Please enter a valid calorie goal.';
+            } else {
+                document.getElementById('goal-display').innerText = `Goal: ${calorieGoal} kcal`;
+                updateStatus();
+            }
         }
         
         function addMeal() {
             let mealName = document.getElementById('meal-name').value;
             let mealCalories = parseInt(document.getElementById('meal-calories').value);
-            if (mealName && mealCalories) {
+            
+            if (!mealName || !mealCalories || mealCalories <= 0) {
+                document.getElementById('error-message').innerText = 'Please enter valid meal details!';
+                return;
+            } else {
+                document.getElementById('error-message').innerText = '';
+                
                 let mealList = document.getElementById('meal-list');
                 let mealDiv = document.createElement('div');
                 mealDiv.classList.add('meal');
@@ -60,6 +80,7 @@
                 
                 totalCalories += mealCalories;
                 document.getElementById('total-calories').innerText = totalCalories;
+                updateStatus();
             }
         }
         
@@ -67,7 +88,25 @@
             button.parentElement.remove();
             totalCalories -= calories;
             document.getElementById('total-calories').innerText = totalCalories;
+            updateStatus();
+        }
+        
+        function updateStatus() {
+            if (calorieGoal && totalCalories) {
+                let statusMessage = document.getElementById('status-message');
+                if (totalCalories > calorieGoal) {
+                    statusMessage.innerText = 'You have exceeded your daily calorie goal!';
+                    statusMessage.style.color = 'red';
+                } else if (totalCalories === calorieGoal) {
+                    statusMessage.innerText = 'You have reached your daily calorie goal!';
+                    statusMessage.style.color = 'green';
+                } else {
+                    statusMessage.innerText = `You are ${calorieGoal - totalCalories} kcal away from your goal.`;
+                    statusMessage.style.color = 'blue';
+                }
+            }
         }
     </script>
 </body>
 </html>
+
